@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Curso de JavaScript</title>
+
+    <style>
+        table {
+            margin-top: 1rem;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 0.5rem;
+        }
+
+        .ocultar-elemento {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Curso de JavaScript - Preentrega 3</h1>
+
+<input type="text" id="buscarProducto" placeholder="Nombre de producto..." />
+
+<table>
+    <thead>
+    <tr>
+        <th>NOMBRE</th>
+        <th>PRECIO</th>
+        <th>CANTIDAD</th>
+        <th>ACCIONES</th>
+    </tr>
+    </thead>
+
+    <tbody id="tbodyProductos"></tbody>
+</table>
+
+<h3><strong>SUBTOTAL:</strong> $<span id="subtotal">0</span></h3>
+<h3><strong>IVA:</strong> $<span id="iva">0</span></h3>
+<h2><strong>TOTAL:</strong> $<span id="total">0</span></h2>
+
+<form id="formAgregarProducto" style="margin-top: 1rem">
+    <input type="text" id="nombreProducto" placeholder="Nombre" />
+    <input type="text" id="precioProducto" placeholder="Precio" />
+    <input type="text" id="cantidadProducto" placeholder="Cantidad" />
+
+    <button type="submit">Agregar producto</button>
+</form>
+
+<script src="js/main.js"></script>
+</body>
+</html>
