@@ -1,5 +1,5 @@
 /**
- * Tercer preentrega
+ * Tercera preentrega
  */
 
 // Objetos
@@ -48,7 +48,7 @@ class Producto {
         tdPrecio.append(spanPrecio);
         tdCantidad.append(spanCantidad);
 
-        // TD acciones
+        // TD boton acciones
         const botonEliminar = document.createElement("button");
         botonEliminar.innerText = "Eliminar";
 
@@ -71,8 +71,8 @@ function buscarProducto() {
     const value = inputBuscarProducto.value;
 
     // Filtrar los productos
-    productosFiltrados = productos.filter( (el) => {
-        return el.nombre.toLowerCase().includes(value.toLowerCase());
+    productosFiltrados = productos.filter( (item) => {
+        return item.nombre.toLowerCase().includes(value.toLowerCase());
     });
 
     // Renderizar tabla
@@ -111,68 +111,70 @@ function obtenerDeLS() {
             localStorage.getItem("productos")
         )
     ) || [
-        new Producto("Tomates", 20, 2),
-        new Producto("Lechuga", 30, 3),
-        new Producto("Yogurt", 50, 4),
+        new Producto("Funda", 12000, 1),
+        new Producto("Auricular", 81000, 2),
+        new Producto("Protector", 15000, 4),
+        new Producto("Cable USB-C", 12500, 1),        
     ];
 }
 
+
 function obtenerSubtotal() {
-    return productosFiltrados.reduce( (acc, el) => {
-        return acc + el.obtenerSubtotal();
+    return productosFiltrados.reduce( (acc, item) => {
+        return acc + item.obtenerSubtotal();
     }, 0);
 }
 
 function obtenerTotal() {
-    return productos.reduce( (acc, el) => {
-        return acc + el.obtenerSubtotal() + el.obtenerIva();
+    return productos.reduce( (acc, item) => {
+        return acc + item.obtenerSubtotal() + item.obtenerIva();
     }, 0);
 }
 
 function obtenerIva() {
-    return productosFiltrados.reduce( (acc, el) => {
-        return acc + el.obtenerIva();
+    return productosFiltrados.reduce( (acc, item) => {
+        return acc + item.obtenerIva();
     }, 0);
 }
 
 function nombreProductoExiste(nombre) {
-    return productos.some( (el) => {
-        return el.nombre.toLowerCase() === nombre.toLowerCase();
+    return productos.some( (item) => {
+        return item.nombre.toLowerCase() === nombre.toLowerCase();
     });
 }
 
 function crearProducto(e) {
     e.preventDefault();
 
-    // Obtener los inputs
+    // Leer los inputs
     const inputNombreProducto = document.getElementById("nombreProducto");
     const inputPrecioProducto = document.getElementById("precioProducto");
     const inputCantidadProducto = document.getElementById("cantidadProducto");
 
-    // Pedimos los datos del producto
+    // Guardar los datos del producto
     const nombreProducto = inputNombreProducto.value;
     const precioProducto = parseFloat(inputPrecioProducto.value);
     const cantidad = parseInt(inputCantidadProducto.value);
 
-    // Limpiamos inputs
+    // Limpiar inputs
     inputNombreProducto.value = "";
     inputCantidadProducto.value = "";
     inputPrecioProducto.value = "";
 
-    // Chequeamos si el nombre del producto no existe
+    // Evitar duplicados
     if(nombreProductoExiste(nombreProducto)) {
         alert("PRODUCTO YA EXISTE");
         return;
     }
 
-    // Creamos el producto
+    // Nuevo producto
     const producto = new Producto(
         nombreProducto,
         precioProducto,
         cantidad,
     );
 
-    // Agregamos el producto al array
+    // Agregar el producto al array
     productos.push(producto);
 
     // Guardamos en local storage
@@ -244,8 +246,8 @@ function eliminarProducto(producto) {
     // });
 
     // Forma 2
-    const indiceElemento = productos.findIndex( (el) => {
-        return el.nombre === producto.nombre;
+    const indiceElemento = productos.findIndex( (item) => {
+        return item.nombre === producto.nombre;
     });
 
     productos.splice(indiceElemento, 1);
