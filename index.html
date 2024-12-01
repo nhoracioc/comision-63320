@@ -1,56 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Curso de JavaScript</title>
-
-    <style>
-        table {
-            margin-top: 1rem;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-            padding: 0.5rem;
-        }
-
-        .ocultar-elemento {
-            display: none;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturador Web</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<h1>Curso de JavaScript - Preentrega 3</h1>
-
-<input type="text" id="buscarProducto" placeholder="Nombre de producto..." />
-
-<table>
-    <thead>
-    <tr>
-        <th>NOMBRE</th>
-        <th>PRECIO</th>
-        <th>CANTIDAD</th>
-        <th>ACCIONES</th>
-    </tr>
-    </thead>
-
-    <tbody id="tbodyProductos"></tbody>
-</table>
-
-<h3><strong>SUBTOTAL:</strong> $<span id="subtotal">0</span></h3>
-<h3><strong>IVA:</strong> $<span id="iva">0</span></h3>
-<h2><strong>TOTAL:</strong> $<span id="total">0</span></h2>
-
-<form id="formAgregarProducto" style="margin-top: 1rem">
-    <h2>Agregar Artículos</h2>
-    <input type="text" id="nombreProducto" placeholder="Nombre" />
-    <input type="text" id="precioProducto" placeholder="Precio" />
-    <input type="text" id="cantidadProducto" placeholder="Cantidad" />
-
-    <button type="submit">Agregar Artículos</button>
-</form>
-
-<script src="js/main.js"></script>
+    <h1>Facturador Web</h1>
+    
+    <!-- Formulario de Entrada de Productos -->
+    <div id="formularioProducto">
+        <h2>Agregar Producto</h2>
+        <input type="text" id="nombreProducto" placeholder="Nombre del Producto">
+        <input type="number" id="precioProducto" placeholder="Precio" step="0.01">
+        <button onclick="agregarProducto()">Agregar</button>
+    </div>
+    
+    <!-- Lista de Productos -->
+    <div id="listaProductos">
+        <h2>Artículos Seleccionados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla">
+                <!-- Aquí se agregarán las filas dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Resumen de Factura -->
+    <div id="resumenFactura">
+        <h2>Resumen de la Factura</h2>
+        <p>Subtotal: $<span id="subtotal">0.00</span></p>
+        <p>Total: $<span id="total">0.00</span></p>
+        <button onclick="finalizarFactura()">Finalizar Factura</button>
+    </div>
+    
+    <script src="js/main.js"></script>
 </body>
 </html>

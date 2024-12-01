@@ -1,291 +1,98 @@
-/**
- * Tercera preentrega
- */
+// /**
+//  * Tercera preentrega
+//  */
 
-// Objetos
-class Producto {
-    constructor(nombre, precio, cantidad) {
-        this.nombre = nombre;
-        this.precio = precio;
-        this.cantidad = cantidad;
-        this.iva = 21;
+let productos = JSON.parse(localStorage.getItem('productos')) || [];
+let subtotal = 0;
 
-        this.element = this.crearTr();
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    actualizarTabla();
+    calcularTotales();
+});
 
-    obtenerSubtotal() {
-        return this.precio * this.cantidad;
-    }
-
-    obtenerIva() {
-        return this.obtenerSubtotal() * (this.iva / 100);
-    }
-
-    crearTr() {
-        // Creamos tr
-        const tr = document.createElement("tr");
-
-        // Creamos tds
-        const tdNombre = document.createElement("td");
-        const tdPrecio = document.createElement("td");
-        const tdCantidad = document.createElement("td");
-        const tdAcciones = document.createElement("td");
-
-        tdNombre.innerText = `${this.nombre}`;
-
-        const spanPrecio = document.createElement("span");
-        spanPrecio.innerText = `$${this.precio}`;
-        spanPrecio.addEventListener("click", () => {
-            clickSpanPrecioProducto(tdPrecio, spanPrecio, this);
-        });
-
-        const spanCantidad = document.createElement("span");
-        spanCantidad.innerText = `${this.cantidad}`;
-        spanCantidad.addEventListener("click", () => {
-            clickSpanCantidadProducto(tdCantidad, spanCantidad, this);
-        });
-
-        tdPrecio.append(spanPrecio);
-        tdCantidad.append(spanCantidad);
-
-        // TD boton acciones
-        const botonEliminar = document.createElement("button");
-        botonEliminar.innerText = "Eliminar";
-
-        botonEliminar.addEventListener("click", () => {
-            eliminarProducto(this);
-        });
-
-        // Agregar boton al td
-        tdAcciones.append(botonEliminar);
-
-        // Agregar tds al tr
-        tr.append(tdNombre, tdPrecio, tdCantidad, tdAcciones);
-
-        return tr;
+function agregarProducto() {
+    const nombre = document.getElementById('nombreProducto').value;
+    const precio = parseFloat(document.getElementById('precioProducto').value);
+    
+    if (nombre && !isNaN(precio)) {
+        productos.push({ nombre, precio, cantidad: 1, subtotal: precio });
+        actualizarStorage();
+        actualizarTabla();
+        calcularTotales();
+    } else {
+        alert("Ingrese un nombre y un precio válidos.");
     }
 }
 
-// Funciones
-function buscarProducto() {
-    const value = inputBuscarProducto.value;
-
-    // Filtrar los productos
-    productosFiltrados = productos.filter( (item) => {
-        return item.nombre.toLowerCase().includes(value.toLowerCase());
-    });
-
-    // Renderizar tabla
-    renderizarTablaProductos();
-}
-
-function guardarEnLS() {
-    const productosJSON = JSON.stringify(productos);
-
-    localStorage.setItem("productos", productosJSON);
-}
-
-function transformarProductosLocalStorage(productosJSON) {
-    if(productosJSON === null) {
-        return null;
-    }
-
-    const productos = [];
-
-    for(const productoLiteral of productosJSON) {
-        productos.push(
-            new Producto(
-                productoLiteral.nombre,
-                productoLiteral.precio,
-                productoLiteral.cantidad,
-            )
-        )
-    }
-
-    return productos;
-}
-
-function obtenerDeLS() {
-    return transformarProductosLocalStorage(
-        JSON.parse(
-            localStorage.getItem("productos")
-        )
-    ) || [
-        new Producto("Funda", 12000, 1),
-        new Producto("Auricular", 81000, 2),
-        new Producto("Protector", 15000, 4),
-        new Producto("Cable USB-C", 12500, 1),        
-    ];
-}
-
-
-function obtenerSubtotal() {
-    return productosFiltrados.reduce( (acc, item) => {
-        return acc + item.obtenerSubtotal();
-    }, 0);
-}
-
-function obtenerTotal() {
-    return productos.reduce( (acc, item) => {
-        return acc + item.obtenerSubtotal() + item.obtenerIva();
-    }, 0);
-}
-
-function obtenerIva() {
-    return productosFiltrados.reduce( (acc, item) => {
-        return acc + item.obtenerIva();
-    }, 0);
-}
-
-function nombreProductoExiste(nombre) {
-    return productos.some( (item) => {
-        return item.nombre.toLowerCase() === nombre.toLowerCase();
+function actualizarTabla() {
+    const cuerpoTabla = document.getElementById('cuerpoTabla');
+    cuerpoTabla.innerHTML = '';
+    
+    productos.forEach((producto, index) => {
+        const fila = document.createElement('tr');
+        
+        fila.innerHTML = `
+            <td>${producto.nombre}</td>
+            <td><input type="number" value="${producto.precio}" step="0.01" onchange="modificarPrecio(${index}, this.value)"></td>
+            <td><input type="text" value=${producto.cantidad} onchange="modificarCantidad(${index}, this.value)"></td>
+            <td>${producto.subtotal.toFixed(2)}</td>
+            <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
+        `;
+        
+        cuerpoTabla.appendChild(fila);
     });
 }
 
-function crearProducto(e) {
-    e.preventDefault();
-
-    // Leer los inputs
-    const inputNombreProducto = document.getElementById("nombreProducto");
-    const inputPrecioProducto = document.getElementById("precioProducto");
-    const inputCantidadProducto = document.getElementById("cantidadProducto");
-
-    // Guardar los datos del producto
-    const nombreProducto = inputNombreProducto.value;
-    const precioProducto = parseFloat(inputPrecioProducto.value);
-    const cantidad = parseInt(inputCantidadProducto.value);
-
-    // Limpiar inputs
-    inputNombreProducto.value = "";
-    inputCantidadProducto.value = "";
-    inputPrecioProducto.value = "";
-
-    // Evitar duplicados
-    if(nombreProductoExiste(nombreProducto)) {
-        alert("PRODUCTO YA EXISTE");
-        return;
+function modificarPrecio(index, nuevoPrecio) {
+    nuevoPrecio = parseFloat(nuevoPrecio);
+    
+    if (!isNaN(nuevoPrecio)) {
+        productos[index].precio = nuevoPrecio;
+        productos[index].subtotal = productos[index].cantidad * nuevoPrecio;
+        actualizarStorage();
+        actualizarTabla();
+        calcularTotales();
+    } else {
+        alert("Ingrese un precio válido.");
     }
-
-    // Nuevo producto
-    const producto = new Producto(
-        nombreProducto,
-        precioProducto,
-        cantidad,
-    );
-
-    // Agregar el producto al array
-    productos.push(producto);
-
-    // Guardamos en local storage
-    guardarEnLS();
-
-    alert("PRODUCTO AGREGADO");
-
-    renderizarTablaProductos();
 }
 
-function renderizarTotal() {
-    spanTotal.innerText = obtenerTotal();
-    spanSubtotal.innerText = obtenerSubtotal();
-    spanIva.innerText = obtenerIva();
-}
-
-function clickSpanPrecioProducto(tdPrecio, spanPrecio, producto) {
-    // Crear input
-    const inputPrecio = document.createElement("input");
-    inputPrecio.type = "text";
-    inputPrecio.value = producto.precio;
-
-    inputPrecio.addEventListener("change", () => {
-        // Cambiamos precio de producto
-        producto.precio = parseFloat(inputPrecio.value);
-
-        // Guardamos en local storage
-        guardarEnLS();
-
-        // Volver a renderizar la tabla de productos
-        renderizarTablaProductos();
-    });
-
-    // Agregar input al td
-    tdPrecio.append(inputPrecio);
-
-    // Ocultar span
-    spanPrecio.className = "ocultar-elemento";
-}
-
-function clickSpanCantidadProducto(tdPrecio, spanPrecio, producto) {
-    // Crear input
-    const inputCantidad = document.createElement("input");
-    inputCantidad.type = "text";
-    inputCantidad.value = producto.cantidad;
-
-    inputCantidad.addEventListener("change", () => {
-        // Cambiamos cantidad de producto
-        producto.cantidad = parseInt(inputCantidad.value);
-
-        // Guardamos en local storage
-        guardarEnLS();
-
-        // Volver a renderizar la tabla de productos
-        renderizarTablaProductos();
-    });
-
-    // Agregar input al td
-    tdPrecio.append(inputCantidad);
-
-    // Ocultar span
-    spanPrecio.className = "ocultar-elemento";
-}
-
-function eliminarProducto(producto) {
-    // Forma 1
-    // productos = productos.filter( (el) => {
-    //     return el.nombre !== producto.nombre;
-    // });
-
-    // Forma 2
-    const indiceElemento = productos.findIndex( (item) => {
-        return item.nombre === producto.nombre;
-    });
-
-    productos.splice(indiceElemento, 1);
-
-    // Guardar en el LS
-    guardarEnLS();
-
-    // Renderizar tabla
-    renderizarTablaProductos();
-}
-
-function renderizarTablaProductos() {
-    tbodyProductos.innerHTML = "";
-
-    for(const producto of productosFiltrados) {
-        // Obtener tr
-        const tr = producto.element;
-
-        tbodyProductos.append(tr);
+function modificarCantidad(index, nuevoCantidad) {
+    nuevoCantidad = parseFloat(nuevoCantidad);
+    
+    if (!isNaN(nuevoCantidad)) {
+        productos[index].cantidad = nuevoCantidad;
+        productos[index].subtotal = productos[index].precio * nuevoCantidad;
+        actualizarStorage();
+        actualizarTabla();
+        calcularTotales();
+    } else {
+        alert("Ingrese una cantidad válida.");
     }
-
-    // Renderizamos el total
-    renderizarTotal();
 }
 
-// Inicio del programa
-const formAgregarProducto = document.getElementById("formAgregarProducto");
-const tbodyProductos = document.getElementById("tbodyProductos");
-const spanTotal = document.getElementById("total");
-const spanSubtotal = document.getElementById("subtotal");
-const spanIva = document.getElementById("iva");
-const inputBuscarProducto = document.getElementById("buscarProducto");
+function eliminarProducto(index) {
+    productos.splice(index, 1);
+    actualizarStorage();
+    actualizarTabla();
+    calcularTotales();
+}
 
-let productos = obtenerDeLS();
-let productosFiltrados = [...productos];
+function calcularTotales() {
+    subtotal = productos.reduce((acc, producto) => acc + producto.subtotal, 0);
+    document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+    document.getElementById('total').textContent = subtotal.toFixed(2);
+}
 
-renderizarTablaProductos();
+function actualizarStorage() {
+    localStorage.setItem('productos', JSON.stringify(productos));
+}
 
-// Eventos
-formAgregarProducto.addEventListener("submit", crearProducto);
-inputBuscarProducto.addEventListener("input", buscarProducto);
+function finalizarFactura() {
+    alert("Factura finalizada. Total: $" + subtotal.toFixed(2));
+    
+    productos = [];
+    actualizarStorage();
+    actualizarTabla();
+    calcularTotales();
+}
