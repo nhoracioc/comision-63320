@@ -10,18 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
     calcularTotales();
 });
 
+
 function agregarProducto() {
     const nombre = document.getElementById('nombreProducto').value;
     const precio = parseFloat(document.getElementById('precioProducto').value);
-    
-    if (nombre && !isNaN(precio)) {
-        productos.push({ nombre, precio, cantidad: 1, subtotal: precio });
+    const cantidad = parseInt(document.getElementById('cantidadProducto').value);
+
+    if (nombre && !isNaN(precio) && !isNaN(cantidad)) {
+        productos.push({ nombre, precio, cantidad, subtotal: precio * cantidad });
         actualizarStorage();
         actualizarTabla();
         calcularTotales();
     } else {
-        alert("Ingrese un nombre y un precio válidos.");
+        alert("Ingrese un nombre, precio y cantidad válidos.");
     }
+
+    // Limpiar los campos de entrada
+    document.getElementById('nombreProducto').value = '';
+    document.getElementById('precioProducto').value = '';
+    document.getElementById('cantidadProducto').value = '';
 }
 
 function actualizarTabla() {
@@ -33,7 +40,7 @@ function actualizarTabla() {
         
         fila.innerHTML = `
             <td>${producto.nombre}</td>
-            <td><input type="number" value="${producto.precio}" step="0.01" onchange="modificarPrecio(${index}, this.value)"></td>
+            <td><input type="text" value="${producto.precio}" onchange="modificarPrecio(${index}, this.value)"></td>
             <td><input type="text" value=${producto.cantidad} onchange="modificarCantidad(${index}, this.value)"></td>
             <td>${producto.subtotal.toFixed(2)}</td>
             <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
