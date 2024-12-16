@@ -5,25 +5,6 @@
 let productos = JSON.parse(localStorage.getItem('productos')) || [];
 let subtotal = 0;
 
-// Para levantar articulos desde API
-// document.addEventListener('DOMContentLoaded', () => {
-//     fetch('https://fakestoreapi.com/products')
-//         .then(response => response.json())
-//         .then(data => {
-//             productos = data.map(item => ({
-//                 nombre: item.title,
-//                 precio: item.price,
-//                 cantidad: 1,  // Asignamos una cantidad por defecto
-//                 subtotal: item.price
-//             }));
-//             actualizarTabla();
-//             calcularTotales();
-//             actualizarStorage();
-//         })
-//         .catch(error => console.error('Error al cargar productos:', error));
-// });
-
-
 document.addEventListener('DOMContentLoaded', () => {
     fetch('/json/productos.json')
         .then(response => response.json())
@@ -39,12 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
             actualizarStorage();
         })
         .catch(error => console.error('Error al cargar productos:', error));
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    actualizarTabla();
-    calcularTotales();
 });
 
 function agregarProducto() {
@@ -97,46 +72,6 @@ function agregarProducto() {
     document.getElementById('cantidadProducto').value = '';    
 }
 
-
-
-// function agregarProducto() {
-//     const nombre = document.getElementById('nombreProducto').value;
-//     const precio = parseFloat(document.getElementById('precioProducto').value);
-//     const cantidad = parseInt(document.getElementById('cantidadProducto').value);
-    
-//     if (nombre && !isNaN(precio) && !isNaN(cantidad)) {
-//         // Verificar si el producto ya existe
-//         const productoExistente = productos.find(producto => producto.nombre === nombre);
-        
-//         if (productoExistente) {
-//             const confirmar = confirm(`Ya existe el artículo "${nombre}" en la factura. ¿Desea agregar ${cantidad} a los ya facturados?`);
-//             if (confirmar) {
-//                 productoExistente.cantidad += cantidad;
-//                 productoExistente.subtotal = productoExistente.cantidad * productoExistente.precio;
-//                 actualizarStorage();
-//                 actualizarTabla();
-//                 calcularTotales();
-//             }
-//         } else {
-//             productos.push({ nombre, precio, cantidad, subtotal: precio * cantidad });
-//             actualizarStorage();
-//             actualizarTabla();
-//             calcularTotales();
-//         }
-//     } else {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Datos Invalidos',
-//             text: 'Ingrese un nombre, precio y cantidad válidos.'
-//         });
-        
-//     }
-
-//     // Limpiar los campos de entrada
-//     document.getElementById('nombreProducto').value = '';
-//     document.getElementById('precioProducto').value = '';
-//     document.getElementById('cantidadProducto').value = '';
-// }
 
 function buscarProducto() {
     const terminoBusqueda = document.getElementById('busquedaNombreProducto').value.toLowerCase();
@@ -228,12 +163,17 @@ function eliminarProducto(index) {
 }
 
 
-
 function calcularTotales() {
     subtotal = productos.reduce((acc, producto) => acc + producto.subtotal, 0);
-    document.getElementById('subtotal').textContent = subtotal.toFixed(2);
-    document.getElementById('total').textContent = subtotal.toFixed(2);
+
+    const iva = subtotal * 0.21;  // Calcular el IVA 21% del subtotal
+    const total = subtotal + iva; // Suma el IVA al subtotal para obtener el total
+
+    document.getElementById('subtotal').textContent = subtotal.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+    document.getElementById('iva').textContent = iva.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('total').textContent = total.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
 
 function actualizarStorage() {
     localStorage.setItem('productos', JSON.stringify(productos));
@@ -252,3 +192,4 @@ function finalizarFactura() {
     actualizarTabla();
     calcularTotales();
 }
+
