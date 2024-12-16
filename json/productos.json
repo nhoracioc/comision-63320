@@ -1,0 +1,37 @@
+[
+    { 
+        "nombre": "JUEGO DESCARBONIZACION CON RETENES 4D56", 
+        "precio": 66000,  
+        "cantidad": 10 
+    },
+    { 
+        "nombre": "KIT DE DISTRIBUCION 4D56", 
+        "precio": 1160000, 
+        "cantidad": 1 
+    },
+    { 
+        "nombre": "ARBOL DE LEVAS 4D56", 
+        "precio": 1180000, 
+        "cantidad": 1 
+    },
+    { 
+        "nombre": "BOMBA DE AGUA 4D56", 
+        "precio": 98000, 
+        "cantidad": 2 
+    },
+    { 
+        "nombre": "TAPA DE CILINDRO 4D56", 
+        "precio": 3840000, 
+        "cantidad": 1 
+    },
+    { 
+        "nombre": "VALVULAS DE MOTOR (JUEGO) 4D56", 
+        "precio": 74000, 
+        "cantidad": 4 
+    },
+    { 
+        "nombre": "JUEGO DE AROS 4D56", 
+        "precio": 121685, 
+        "cantidad": 4 
+    }
+]

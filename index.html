@@ -18,6 +18,12 @@
         <button onclick="agregarProducto()">Agregar</button>
     </div>
     
+    <!-- Campo de Búsqueda -->   
+    <div id="busquedaProducto">
+        <h2>Buscar Producto</h2>
+        <input type="text" id="busquedaNombreProducto" placeholder="Buscar por nombre" oninput="buscarProducto()">
+    </div>
+
     <!-- Lista de Productos -->
     <div id="listaProductos">
         <h2>Artículos Seleccionados</h2>
@@ -45,6 +51,7 @@
         <button onclick="finalizarFactura()">Finalizar Factura</button>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
