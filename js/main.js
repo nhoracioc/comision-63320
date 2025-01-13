@@ -5,22 +5,33 @@
 let productos = JSON.parse(localStorage.getItem('productos')) || [];
 let subtotal = 0;
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    fetchProductos();
+});
+
+function fetchProductos() {
     fetch('/json/productos.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar productos');
+            }
+            return response.json();
+        })
         .then(data => {
             productos = data.map(item => ({
                 nombre: item.nombre,
-                precio: Number(item.precio),  // Nos aseguramos que el precio sea un número
-                cantidad: Number(item.cantidad),  // Nos aseguramos que la cantidad sea un número
+                precio: Number(item.precio),
+                cantidad: Number(item.cantidad),
                 subtotal: item.precio * item.cantidad
             }));
             actualizarTabla();
             calcularTotales();
             actualizarStorage();
         })
-        .catch(error => console.error('Error al cargar productos:', error));
-});
+        .catch(error => console.error(error.message));
+}
+
 
 function agregarProducto() {
     const nombre = document.getElementById('nombreProducto').value;
